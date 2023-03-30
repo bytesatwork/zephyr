@@ -1,0 +1,9 @@
+# Copyright (c) 2023 Endor AG
+# SPDX-License-Identifier: Apache-2.0
+
+config IS31FL3216A
+	bool "IS31FL3216A LED driver"
+	default n
+	select I2C
+	help
+	  Enable LED driver for IS31FL3216A.
