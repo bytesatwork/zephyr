@@ -344,6 +344,7 @@ lontium	Lontium Semiconductor Corporation
 loongson	Loongson Technology Corporation Limited
 lowrisc	lowRISC Community Interest Company
 lsi	LSI Corp. (LSI Logic)
+lumissil	Lumissil Microsystems
 lwn	Liebherr-Werk Nenzing GmbH
 lxa	Linux Automation GmbH
 m5stack	M5Stack
