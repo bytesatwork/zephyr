@@ -9,5 +9,6 @@ zephyr_library_sources(
 )
 
 zephyr_library_sources_ifdef(CONFIG_SPI bma400_spi.c)
+zephyr_library_sources_ifdef(CONFIG_I2C bma400_i2c.c)
 zephyr_library_sources_ifdef(CONFIG_BMA400_STREAM bma400_rtio_stream.c)
 zephyr_library_sources_ifdef(CONFIG_BMA400_STREAM bma400_interrupt.c)

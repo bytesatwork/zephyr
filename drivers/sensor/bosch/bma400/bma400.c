@@ -700,17 +700,29 @@ static DEVICE_API(sensor, bma400_driver_api) = {
 
 #define BMA400_RTIO_SPI_DEFINE(inst)                                                               \
 	SPI_DT_IODEV_DEFINE(bma400_iodev_##inst, DT_DRV_INST(inst), BMA400_SPI_OPERATION);         \
-	RTIO_DEFINE(bma400_rtio_##inst, 8, 8);
+	RTIO_DEFINE(bma400_rtio_##inst, 8, 8); \
+	static const struct rtio_iodev bma400_iodev_ptr_##inst = &bma400_iodev_##inst;
 
-#define BMA400_DEFINE_RTIO(inst) BMA400_RTIO_SPI_DEFINE(inst)
+#define BMA400_RTIO_I2C_DEFINE(inst)
+
+#define BMA400_DEFINE_RTIO(inst) \
+	COND_CODE_1(DT_INST_ON_BUS(inst, spi), (BMA400_RTIO_SPI_DEFINE(inst)), (BMA400_DEFINE_RTIO(inst)))
 
 /* Initializes a struct bma400_config for an instance on a SPI bus.
  */
 #define BMA400_CONFIG_SPI(inst)                                                                    \
-	.bus_cfg.spi = SPI_DT_SPEC_INST_GET(inst, BMA400_SPI_OPERATION),                           \
-	.bus_init = &bma400_spi_init, .bus_type = BMA400_BUS_SPI,
+	.bus_cfg.spi = SPI_DT_SPEC_INST_GET(inst, BMA400_SPI_OPERATION, 0),                     \
+	.bus_init = &bma400_spi_init, \
+	.bus_type = BMA400_BUS_SPI,
 
-#define BMA400_DEFINE_BUS(inst) BMA400_CONFIG_SPI(inst)
+/* Initializes a struct bma4xx_config for an instance on an I2C bus. */
+#define BMA400_CONFIG_I2C(inst)                                                                    \
+	.bus_cfg.i2c = I2C_DT_SPEC_INST_GET(inst), \
+	.bus_init = &bma400_i2c_init,                   \
+	.bus_type = BMA400_BUS_I2C,
+
+#define BMA400_DEFINE_BUS(inst)                                                                    \
+	COND_CODE_1(DT_INST_ON_BUS(inst, spi), (BMA400_CONFIG_SPI(inst)), (BMA400_CONFIG_I2C(inst)))
 
 #ifdef CONFIG_BMA400_STREAM
 #define BMA400_CFG_STREAM(inst)                                                                    \
@@ -757,8 +769,8 @@ static DEVICE_API(sensor, bma400_driver_api) = {
 	BMA400_DEFINE_RTIO(inst);                                                                  \
 	static struct bma400_data bma400_driver_##inst = {                                         \
 		.cfg = BMA400_DT_CONFIG_INIT(inst),                                                \
-		.r = &bma400_rtio_##inst,                                                          \
-		.iodev = &bma400_iodev_##inst,                                                     \
+		.r = COND_CODE_1(DT_INST_ON_BUS(inst, spi), (&bma400_rtio_##inst), (NULL)),        \
+		.iodev = COND_CODE_1(DT_INST_ON_BUS(inst, spi), (&bma400_iodev_##inst), (NULL)),   \
 	};
 
 /*

@@ -11,7 +11,9 @@ menuconfig BMA400
 	depends on SENSOR_ASYNC_API
 	select SPI if $(dt_compat_on_bus,$(DT_COMPAT_BOSCH_BMA400),spi)
 	select SPI_RTIO if $(dt_compat_on_bus,$(DT_COMPAT_BOSCH_BMA400),spi)
-	select RTIO_WORKQ
+	select I2C if $(dt_compat_on_bus,$(DT_COMPAT_BOSCH_BMA400),i2c)
+	select I2C_RTIO if $(dt_compat_on_bus,$(DT_COMPAT_BOSCH_BMA400),i2c)
+	#select RTIO_WORKQ
 	help
 	  Driver for Bosch BMA400
 

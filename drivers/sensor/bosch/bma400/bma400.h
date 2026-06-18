@@ -14,15 +14,18 @@
 #include <zephyr/drivers/gpio.h>
 #include "bma400_defs.h"
 #include <zephyr/drivers/spi.h>
+#include <zephyr/drivers/i2c.h>
 
 /*
  * Types
  */
 
 #define BMA400_BUS_SPI 1
+#define BMA400_BUS_I2C 2
 
 union bma400_bus_cfg {
 	struct spi_dt_spec spi;
+	struct i2c_dt_spec i2c;
 };
 
 struct bma400_config {
@@ -122,6 +125,16 @@ static inline int bma400_accel_reg_to_hz(uint8_t odr, struct sensor_value *out)
  * @retval -errdev Error
  */
 int bma400_spi_init(const struct device *dev);
+
+/**
+ * @brief Initialize the i2c bus
+ *
+ * @param dev bma400 device pointer
+ *
+ * @retval 0 success
+ * @retval -errdev Error
+ */
+int bma400_i2c_init(const struct device *dev;
 
 /**
  * @brief (Re)Configure the sensor for streaming with the given configuration
