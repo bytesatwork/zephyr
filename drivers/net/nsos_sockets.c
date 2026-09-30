@@ -195,6 +195,8 @@ static int nsos_socket_create(int family, int type, int proto)
 	sock->fd = fd;
 	sock->recv_timeout = K_FOREVER;
 	sock->send_timeout = K_FOREVER;
+	sock->poll.cond = NULL;
+	sys_dnode_init(&sock->poll.node);
 
 	sock->poll.mid.fd = nsos_adapt_socket(family_mid, type_mid, proto_mid);
 	if (sock->poll.mid.fd < 0) {
@@ -716,6 +718,10 @@ static int nsos_accept(void *obj, struct sockaddr *addr, socklen_t *addrlen)
 	}
 
 	conn_sock->fd = zephyr_fd;
+	conn_sock->recv_timeout = K_FOREVER;
+	conn_sock->send_timeout = K_FOREVER;
+	conn_sock->poll.cond = NULL;
+	sys_dnode_init(&conn_sock->poll.node);
 	conn_sock->poll.mid.fd = adapt_fd;
 
 	zvfs_finalize_typed_fd(zephyr_fd, conn_sock, &nsos_socket_fd_op_vtable.fd_vtable,
